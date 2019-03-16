@@ -1,0 +1,8 @@
+<%- include('./_guest-header') %>
+  <script>
+    window.__PRELOADED_STATE__ = <%- initialState %>;
+  </script>
+  <div id="app"><%- html %></div>
+  <style id="jss-server-side"><%- css %></style>
+  <script type="text/javascript" charset="utf-8" src="/js/guest.js?ver=<%- jsDate %>"></script>
+<%- include('./_guest-footer') %>
