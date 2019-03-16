@@ -1,0 +1,32 @@
+{
+  "name": "generator-goemon",
+  "version": "1.0.0",
+  "description": "Yeoman-generator for goemon framework",
+  "main": "index.js",
+  "scripts": {
+    "build": "node ./node_modules/gulp/bin/gulp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/goemon/goemon.git"
+  },
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "author": "Lunascape Corporation",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/goemon/goemon/issues"
+  },
+  "homepage": "https://github.com/goemon/goemon#readme",
+  "dependencies": {
+    "yeoman-generator": "^3.2.0"
+  },
+  "files": [
+    "app"
+  ],
+  "devDependencies": {
+    "gulp": "^4.0.0"
+  }
+}
