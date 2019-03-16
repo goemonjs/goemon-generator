@@ -42,10 +42,10 @@ module.exports = class extends Generator {
       );
     };
 
-    const files = glob.sync(__dirname + '/goemon' + '/**/*');
+    const files = glob.sync(__dirname + '/templates' + '/**/*');
 
     files.forEach(file => {
-      const route = file.slice((__dirname + 'goemon').length + 2);
+      const route = file.slice((__dirname + 'templates').length + 2);
 
       config.filesToRender.forEach(fileToRender => {
         if (route.includes(fileToRender)) {

@@ -23,9 +23,6 @@
   "dependencies": {
     "yeoman-generator": "^3.2.0"
   },
-  "files": [
-    "app"
-  ],
   "devDependencies": {
     "del": "^4.0.0",
     "gulp": "^4.0.0"

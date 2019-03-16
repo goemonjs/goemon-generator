@@ -3,7 +3,7 @@ var gulp = require('gulp'),
 
 gulp.task('copy-template', function() {
   return gulp.src('./src/goemon/**/*')
-    .pipe(gulp.dest('./app/goemon/'));
+    .pipe(gulp.dest('./generators/app/templates/'));
 });
 
 gulp.task('remove-tempalte', del.bind(null, ['app/goemon']));
