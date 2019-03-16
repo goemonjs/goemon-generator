@@ -57,5 +57,21 @@ module.exports = class extends Generator {
         }
       })
     });
+
+    const dotfiles = glob.sync(__dirname + '/templates' + '/**/.*');
+
+    dotfiles.forEach(file => {
+      const route = file.slice((__dirname + 'templates').length + 2);
+
+      config.filesToRender.forEach(fileToRender => {
+        if (route.includes(fileToRender)) {
+          // Render file
+          copyTpl(route, route, templateData);
+        } else {
+          // Copy file
+          copy(route, route);
+        }
+      })
+    });
   }
 };
