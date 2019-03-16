@@ -2,7 +2,7 @@ var gulp = require('gulp'),
     del = require('del');
 
 gulp.task('copy-template', function() {
-  return gulp.src('./src/goemon/**/*')
+  return gulp.src(['./src/goemon/**/*', './src/goemon/**/.*'])
     .pipe(gulp.dest('./generators/app/templates/'));
 });
 
