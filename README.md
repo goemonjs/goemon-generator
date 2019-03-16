@@ -8,7 +8,7 @@ Node.js v10.x.x.
 ### INSTALL
 ```
 npm install -g yo
-npm install -g git+ssh://git@github.com:goemonjs/goemon-generator.git
+npm install -g https://github.com/goemonjs/goemon-generator.git
 ```
 ### GENERATE
 ```
