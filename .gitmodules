@@ -1,0 +1,3 @@
+[submodule "app/goemon"]
+	path = app/goemon
+	url = https://github.com/goemonjs/goemon
