@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Router } from 'express';
 import { configureStore } from '../client/stores/member-store';
-import { RouteComponent, routes } from '../client/apps/member-route';
+import { RouteComponent, routes } from '../client/routes/member-route';
 import { theme } from '../client/themes/material-ui-lightblue';
 import { Renderer } from './base/route-base';
 import * as passport from 'passport';
@@ -14,10 +14,6 @@ let renderer =  new Renderer(store, RouteComponent, routes, theme);
 module.exports = (app) => {
   app.use('/member', router);
 };
-
-router.get('/login',  (req: any, res, next) => {
-  res.render('member-login', { message: req.flash('error') });
-});
 
 router.post('/login', passport.authenticate('local',
   { successRedirect: '/member', failureRedirect: '/member/login', failureFlash: true }
@@ -36,5 +32,5 @@ function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/member/login');
+  res.redirect('/login');
 }
