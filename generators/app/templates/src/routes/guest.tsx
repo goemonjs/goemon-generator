@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React from 'react';
 import { Express, Router } from 'express';
 import { configureStore } from '../client/stores/guest-store';
 import { AppContainer } from '../client/base/react/app-container';
@@ -7,7 +7,7 @@ import { ServerSideRenderer } from './utilities/ssr-renderer';
 
 const router = Router();
 const store = configureStore();
-const renderer = new ServerSideRenderer('/js/guest.js', store);
+const renderer = new ServerSideRenderer('guest.js');
 
 module.exports = function (app: Express) {
   app.use('/', router);

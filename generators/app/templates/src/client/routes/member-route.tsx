@@ -1,19 +1,18 @@
-import * as React from 'react';
+import React from 'react';
 import { renderRoutes } from 'react-router-config';
 import MemberTop from '../views/member-top';
 import { NotFound } from '../views/components/notfound';
 
 interface IProps  {
-  // routes: any;
 }
 
 interface IState {
-  hasError: boolean;
+  locale: string;
 }
 
 export const routes = [
   {
-    path: '/member',
+    path: '/member/',
     component: MemberTop,
     exact: true
   }, {
@@ -29,16 +28,28 @@ export const routes = [
     component: MemberTop,
     exact: true
   }, {
+    path: '/member/form',
+    component: MemberTop,
+    exact: true
+  }, {
     path: '/member/*',
     component: NotFound
   }
 ];
 
 export class RouteComponent extends React.Component<IProps, IState> {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      locale: 'en'
+    };
+  }
+
   render () {
-    // const { match } = this.props;
+
     return (
-      renderRoutes(routes)
+        renderRoutes(routes)
     );
   }
 }

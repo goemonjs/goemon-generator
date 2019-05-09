@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React from 'react';
 import { Router } from 'express';
 import { configureStore } from '../client/stores/member-store';
 import { MaterialUiAppContainer } from '../client/base/react/material-ui-app-container';
@@ -6,24 +6,24 @@ import { RouteComponent, routes } from '../client/routes/member-route';
 import { theme } from '../client/themes/material-ui-lightblue';
 import { ServerSideRenderer } from './utilities/ssr-renderer';
 import { SheetsRegistry } from 'react-jss/lib/jss';
-import * as passport from 'passport';
+import passport from 'passport';
 
 const router = Router();
 const store = configureStore();
 
-let renderer =  new ServerSideRenderer('/js/member.js', store);
+let renderer =  new ServerSideRenderer('member.js');
 
 module.exports = (app) => {
   app.use('/member', router);
 };
 
 router.post('/login', passport.authenticate('local',
-  { successRedirect: '/member', failureRedirect: '/member/login', failureFlash: true }
+  { successRedirect: '/member/', failureRedirect: '/member/login', failureFlash: true }
 ));
 
 router.get('/logout', (req: any, res) => {
   req.logout();
-  res.redirect('/member');
+  res.redirect('/member/');
 });
 
 router.get('*', isAuthenticated, (req, res) => {

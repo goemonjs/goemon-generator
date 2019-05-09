@@ -1,11 +1,11 @@
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Lunascape Corporation. All rights reserved.
  *--------------------------------------------------------------------------------------------*/
-import * as express from 'express';
-import * as mongoose from 'mongoose';
-import * as glob from'glob';
-import * as path from'path';
-import MongoMemoryServer from 'mongodb-memory-server';
+import express from 'express';
+import mongoose from 'mongoose';
+import glob from 'glob';
+import path from 'path';
+import * as mongodbMemoryServer from 'mongodb-memory-server';
 
 import { envs } from '../env';
 import { isTestMode } from '../base/utilities/debug';
@@ -24,7 +24,7 @@ module.exports = async (app: express.Express) => {
   let connectionString: string = envs.MONGODB_CONNECTION_URL.value;
 
   if ( connectionName === undefined ) {
-    const mongod = new MongoMemoryServer();
+    const mongod = new mongodbMemoryServer.MongoMemoryServer();
     connectionName = await mongod.getDbName();
     connectionString = await mongod.getConnectionString();
   }
@@ -34,7 +34,7 @@ module.exports = async (app: express.Express) => {
       if (err) {
         console.error(err);
       } else {
-        console.log('Success to connect database : ' + (connectionName ? connectionName : connectionString));
+        console.log('Successfully connected to database : ' + (connectionName ? connectionName : connectionString));
 
         // Load modules
         let strategiesPath = path.normalize(__dirname + '/mongodb/seeddata');

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React from 'react';
 import { connect } from 'react-redux';
 import * as ProfileActions from '../../../actions/profile-actions';
 import { IStore } from '../../../stores/member-store';
@@ -34,12 +34,6 @@ class Profile extends React.Component<IProps & IDispProps, {}> {
       </div>
     );
   }
-
-  // This is not work, because the server does not have the credential cookie to asscess api/me
-  // static async getInitialProps(store, protocol: string, host: string) {
-  //   const url = protocol + '://' + host + '/api/me';
-  //   return store.dispatch(ProfileActions.loadProfile(url));
-  // }
 
   // It is called only client rendering
   componentDidMount() {

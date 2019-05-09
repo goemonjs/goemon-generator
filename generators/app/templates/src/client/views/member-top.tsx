@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React from 'react';
 import { Route, Switch } from 'react-router';
 import { RouteComponentProps } from 'react-router-dom';
 
@@ -52,8 +52,8 @@ class MemberTop extends React.Component<IProps & WithStyles<typeof styles>, {}> 
         <div><p>URL: {match.url}</p></div>
         <Switch>
           <Route exact path={`/member/profile`} component={Profile} />
-          <Route exact path={`/member/page`} component={PageSample} />
-          <Route exact path={`${match.url}`} component={FormSample} />
+          <Route exact path={`/member/form`} component={FormSample} />
+          <Route exact path={`/member/`} component={PageSample} />
         </Switch>
       </main>
     </div>
