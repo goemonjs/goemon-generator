@@ -1,6 +1,8 @@
-import  React from 'react';
+import React from 'react';
 import { matchRoutes } from 'react-router-config';
 import { renderToString } from 'react-dom/server';
+const XmlEntities = require('html-entities').XmlEntities;
+const xmlEntities = new XmlEntities();
 import { generateNumberFromTimestamp } from '../../base/utilities/file';
 import { isProductionMode } from '../../base/utilities/debug';
 import i18n from '../../client/localization/i18n';
@@ -9,10 +11,10 @@ import i18n from '../../client/localization/i18n';
  * Server side renderer utility class
  */
 export class ServerSideRenderer {
-/**
- * Constructor
- * @param bundleFilePath builde file path of webpack
- */
+  /**
+   * Constructor
+   * @param bundleFilePath builde file path of webpack
+   */
   constructor(public bundleFilePath: string) {
   }
 
@@ -42,8 +44,8 @@ export class ServerSideRenderer {
 
       let config = ejsOptions.config !== undefined ? ejsOptions.config : {};
 
-      if ( !isProductionMode() ) {
-        const serverState =  {
+      if (!isProductionMode()) {
+        const serverState = {
           host: host,
           protocol: protocol,
         };
@@ -55,15 +57,14 @@ export class ServerSideRenderer {
 
       let option = {
         html: html,
-        config: JSON.stringify(config),
+        config: xmlEntities.encode(JSON.stringify(config)),
         css: cssGenerator !== undefined ? cssGenerator() : '',
         bundle: '/js/' + this.bundleFilePath + '?ver=' + timeStamp
       };
+      Object.assign(ejsOptions, option);
 
-      Object.assign(option, ejsOptions);
-
-      res.render(ejsName, option);
-    } catch ( err ) {
+      res.render(ejsName, ejsOptions);
+    } catch (err) {
       console.error(err);
     }
   }
@@ -78,12 +79,19 @@ export class ServerSideRenderer {
    * @param routes route
    * @param cssGenerator css generator
    */
-  public renderWithInitialProps(req: any, res: any, ejsName: string, ejsOptions: any, component: any, routes, cssGenerator?: () => string) {
+  public renderWithInitialProps(req: any, res: any, ejsName: string, ejsOptions: any, component: any, routes, store, cssGenerator?: () => string) {
     // getInitalProps
+    const protocol = (process.env.PROTOCOL || req.protocol);
+    const host = process.env.HOST || req.headers.host;
+
     const branch = matchRoutes(routes, req.baseUrl + req.url);
-    const promises = branch.map(({route}) => {
+    const promises = branch.map(({ route }) => {
       let getInitialProps = route.component.getInitialProps;
-      return getInitialProps instanceof Function ? getInitialProps() : Promise.resolve(undefined);
+      return getInitialProps instanceof Function ? getInitialProps({
+        store: store,
+        protocol: protocol,
+        host: host
+      }) : Promise.resolve(undefined);
     });
 
     return Promise.all(promises).then((data) => {

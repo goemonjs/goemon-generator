@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import http from 'http';
+import { createServer } from '../../../base/utilities/test-utilities';
 import * as App from '../../../app';
 import HelloService from '../hello-service';
 
@@ -19,26 +19,10 @@ if (!global.fetch) {
 describe('/hello test', () => {
 
   test('hello', async (done) => {
-    let app = App.createApp({isTest: true});
+    let app = App.createApp({ isTest: true });
     let server = createServer(app);
-    let result = await HelloService.hello(`http://localhost:${server.port}/hello`);
+    let result = await HelloService.hello(`http://localhost:${server.port}/gapi/guest`);
     expect(result).toEqual('Hello world!');
     done();
   });
 });
-
-// jest-enviroment node is nesesarry, but this is client side test, so
-// we need to consider better way
-function createServer(app) {
-  const newApp = http.createServer(app);
-  newApp.listen(0);
-
-  const address: any = newApp.address();
-  const port = address.port;
-  // console.log('Listen port : ' + port);
-
-  return {
-    app: newApp,
-    port: port
-  };
-}
