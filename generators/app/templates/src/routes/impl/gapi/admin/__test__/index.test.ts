@@ -1,12 +1,11 @@
 /**
  * @jest-environment node
  */
+
 import mongoose from 'mongoose';
 import * as mongodbMemoryServer from 'mongodb-memory-server';
+import supertest from 'supertest';
 import * as App from '../../../../../app';
-import TestHelper from '../../../../../base/utilities/test-helper';
-
-import { GuestGApiClient } from '../guest-gapi-client';
 
 describe('routes/api test', () => {
 
@@ -35,12 +34,17 @@ describe('routes/api test', () => {
 
   const app = App.createApp({ isTest: true });
 
-  test('/gapi/guest hello', async () => {
-    let server = TestHelper.createServer(app);
-    const client = new GuestGApiClient({
-      baseUrl: `http://localhost:${server.port}/gapi/guest`
-    });
-    const result = await client.hello();
-    expect(result.hello).toBe('Hello world!');
+  test('/gapi/admin hello', async (done) => {
+    supertest(app).post('/gapi/admin')
+      .send({ query: '{ hello }' })
+      .expect(200)
+      .end((err, res) => {
+        expect(res.body.data.hello).toBe('Hello world!');
+        if (err) {
+          return done(err);
+        }
+        done();
+      });
   });
+
 });

@@ -1,12 +1,12 @@
 /**
  * @jest-environment node
  */
+
 import mongoose from 'mongoose';
 import * as mongodbMemoryServer from 'mongodb-memory-server';
-import * as App from '../../../../../app';
-import TestHelper from '../../../../../base/utilities/test-helper';
+import { Todo } from '../todo';
 
-import { GuestGApiClient } from '../guest-gapi-client';
+import * as App from '../../app';
 
 describe('routes/api test', () => {
 
@@ -36,11 +36,12 @@ describe('routes/api test', () => {
   const app = App.createApp({ isTest: true });
 
   test('/gapi/guest hello', async () => {
-    let server = TestHelper.createServer(app);
-    const client = new GuestGApiClient({
-      baseUrl: `http://localhost:${server.port}/gapi/guest`
+    let todo = new Todo({
+      caption: 'Test caption',
+      isChecked: false
     });
-    const result = await client.hello();
-    expect(result.hello).toBe('Hello world!');
+    await todo.save();
+    let result = await Todo.findOne({ _id: todo._id }).exec();
+    expect(result!.caption).toEqual('Test caption');
   });
 });

@@ -1,6 +1,5 @@
 import { gql } from 'apollo-server-express';
-import profileSchema from './profile';
-import todoSchema from './todo';
+import helloSchema from './hello';
 
 const linkSchema = gql`
   type Query {
@@ -14,17 +13,9 @@ const linkSchema = gql`
   type Subscription {
     _: Boolean
   }
-
-  type User {
-    id: String!
-    email: String!
-    displayName: String!
-    roles: [String]
-  }
 `;
 
 export default [
   linkSchema,
-  todoSchema,
-  profileSchema
+  helloSchema
 ];
