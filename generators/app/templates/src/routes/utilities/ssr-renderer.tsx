@@ -6,6 +6,7 @@ const xmlEntities = new XmlEntities();
 import { generateNumberFromTimestamp } from '../../base/utilities/file';
 import { isProductionMode } from '../../base/utilities/debug';
 import i18n from '../../client/localization/i18n';
+import { logger } from '../../base/utilities/logger';
 
 /**
  * Server side renderer utility class
@@ -33,7 +34,7 @@ export class ServerSideRenderer {
       let host = process.env.HOST || req.headers.host;
 
       const lng = req.language;
-      // console.log(`Request locale: ${lng}`);
+      logger.debug(`Request locale: ${lng}`);
       i18n.changeLanguage(lng);
 
       const html = renderToString(
@@ -65,7 +66,7 @@ export class ServerSideRenderer {
 
       res.render(ejsName, ejsOptions);
     } catch (err) {
-      console.error(err);
+      logger.error(err);
     }
   }
 
@@ -80,7 +81,7 @@ export class ServerSideRenderer {
    * @param cssGenerator css generator
    */
   public renderWithInitialProps(req: any, res: any, ejsName: string, ejsOptions: any, component: any, routes, store, cssGenerator?: () => string) {
-    // getInitalProps
+
     const protocol = (process.env.PROTOCOL || req.protocol);
     const host = process.env.HOST || req.headers.host;
 
@@ -88,9 +89,11 @@ export class ServerSideRenderer {
     const promises = branch.map(({ route }) => {
       let getInitialProps = route.component.getInitialProps;
       return getInitialProps instanceof Function ? getInitialProps({
-        store: store,
         protocol: protocol,
-        host: host
+        host: host,
+        store: store,
+        req: req,
+        env: process.env
       }) : Promise.resolve(undefined);
     });
 
@@ -99,6 +102,7 @@ export class ServerSideRenderer {
         initialState: JSON.stringify(data),
       };
       Object.assign(option, ejsOptions);
+
       this.render(req, res, ejsName, ejsOptions, component, cssGenerator);
     });
   }

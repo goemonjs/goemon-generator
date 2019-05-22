@@ -1,10 +1,30 @@
 import express from 'express';
 import { createJWTToken } from '../base/utilities/jwt';
+import { logger } from '../base/utilities/logger';
+import os from 'os';
+
 let router = express.Router();
+
+type httpPostDataLayout = {
+  logger: string;
+  timestamp: string;
+  level: string;
+  message: string;
+  exception: string;
+  url: string;
+};
 
 module.exports = function (app: express.Express) {
   app.use('/api', router);
 };
+
+router.post('/log', (req: any, res, next) => {
+  const log: httpPostDataLayout = req.body;
+  const timestamp: number = Number.parseInt(log.timestamp);
+  const date = new Date(timestamp);
+
+  logger.error(`${os.EOL}client timestamp: ${date.toISOString()}${os.EOL}url:${log.url}${os.EOL}${log.message}`);
+});
 
 router.get('/listTodos', (req, res, next) => {
   // Be careful of security when use this headres !!
@@ -20,8 +40,9 @@ router.get('/listTodos', (req, res, next) => {
 
 router.get('/me', isAuthenticated, (req: any, res, next) => {
   res.json({
-    id: req.user.id,
-    email: req.user.email
+    email: req.user.email,
+    displayName: req.user.displayName,
+    roles: req.user.roles
   });
 });
 
@@ -32,11 +53,9 @@ router.get('/token', isAuthenticated, (req: any, res, next) => {
 
   try {
     const token = createJWTToken(req.user);
-    const result = {
+    return res.json({
       token,
-    };
-
-    return res.json(result);
+    });
   } catch (error) {
     throw error;
   }

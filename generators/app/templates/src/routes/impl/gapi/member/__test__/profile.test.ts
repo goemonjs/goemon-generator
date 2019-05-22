@@ -23,8 +23,6 @@ describe('routes/api test', () => {
   });
 
   beforeEach(async () => {
-    const agent = await TestHelper.getAuthenticatedAgent(app);
-    token = await TestHelper.getAuthToekn(agent);
   });
 
   test('/gapi/member getProfile', async () => {
@@ -43,7 +41,17 @@ describe('routes/api test', () => {
         query:
           `query Profile {
             getProfile {
-              email
+              email,
+              roles,
+              email,
+              displayName,
+              isEmailVeried,
+              firstName,
+              middleName,
+              lastName,
+              birthDay,
+              createdAt,
+              updatedAt
             }
           }`
       })

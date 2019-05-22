@@ -1,36 +1,58 @@
 import { createTypeReducer } from 'type-redux';
-import * as Actions from '../actions/profile-actions';
+import * as ProfileActions from '../actions/profile-actions';
+import * as AuthActions from '../actions/auth-actions';
 
 // Redux Action Reducer Samples
 export type IState = {
+  token?: string;
+  email?: string;
+  displayName?: string;
+  roles: string[];
+  profile: {
+    userId?: string,
+    email?: string,
+    displayName?: string,
+    firstName?: string,
+    lastName?: string
+  },
   message: string;
   snackBarState: {
     type: 'success' | 'warning' | 'error' | 'info';
     open: boolean;
   };
-  profile: {
-    userid: string,
-    username: string
-  }
 };
 
 export const initialState: IState = {
+  displayName: 'A',
+  roles: [],
+  profile: {
+    userId: undefined,
+    email: undefined,
+    displayName: undefined,
+    firstName: undefined,
+    lastName: undefined
+  },
   message: '',
   snackBarState: {
     type: 'info',
     open: false
   },
-  profile: {
-    userid : '',
-    username : ''
-  }
 };
 
-export const getProfileReducer = Actions.getProfile.reducer<IState>((state, action) => {
-  if ( action.error ) {
+export const initProfileReducer = ProfileActions.initProfile.reducer<IState>((state, action) => {
+  if (action.error) {
+    return {};
+  }
+  return {
+    displayName: action.payload.displayName
+  };
+});
+
+export const getProfileReducer = ProfileActions.getProfile.reducer<IState>((state, action) => {
+  if (action.error) {
     return {
-      userid: '',
-      username: '',
+      userId: undefined,
+      email: undefined,
       message: action.payload!.message && <string>action.meta,
       snackBarState: {
         type: 'error',
@@ -39,15 +61,56 @@ export const getProfileReducer = Actions.getProfile.reducer<IState>((state, acti
     };
   }
   return {
+    email: action.payload.email,
+    // displayName: action.payload.displayName,
+    roles: action.payload.roles,
+    message: ''
+  };
+});
+
+export const getProfileByGAPIReducer = ProfileActions.getProfileByGAPI.reducer<IState>((state, action) => {
+  if (action.error) {
+    return {
+      userid: '',
+      username: '',
+      message: action.payload!.message,
+      snackBarState: {
+        type: 'error',
+        open: true
+      }
+    };
+  }
+  return {
     profile: {
-      userid: action.payload.id,
-      username: action.payload.email
+      email: action.payload.getProfile.email,
+      displayName: action.payload.getProfile.displayName,
+      firstName: action.payload.getProfile.firstName,
+      lastName: action.payload.getProfile.lastName,
     },
     message: ''
   };
 });
 
+export const getTokenReducer = AuthActions.getToken.reducer<IState>((state, action) => {
+  if (action.error) {
+    return {
+      token: undefined,
+      message: action.payload!.message && <string>action.meta,
+      snackBarState: {
+        type: 'error',
+        open: true
+      }
+    };
+  }
+  return {
+    token: action.payload.token
+  };
+});
+
 export const reducer = createTypeReducer(
   initialState,
-  getProfileReducer
+  initProfileReducer,
+  getTokenReducer,
+  getProfileReducer,
+  getProfileByGAPIReducer
 );

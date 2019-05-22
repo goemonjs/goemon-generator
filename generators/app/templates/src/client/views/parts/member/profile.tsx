@@ -1,61 +1,108 @@
-import  React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import * as ProfileActions from '../../../actions/profile-actions';
 import { IStore } from '../../../stores/member-store';
+import { styles } from '../../../themes/material-ui-lightblue';
+import { withStyles } from '@material-ui/core/styles';
+import { WithStyles } from '@material-ui/core';
 
 interface IProps {
-  profile: any;
-  isFetching: boolean;
+  email?: string;
+  displayName?: string;
+  profile: {
+    email?: string;
+    displayName?: string;
+    firstName?: string;
+    lastName?: string;
+  };
+  isAPIFetching: boolean;
+  isGAPIFetching: boolean;
+  token?: string;
 }
 
 interface IDispProps {
-  loadProfile: (url: string) => void;
+  getProfileByRestAPI: () => void;
+  getProfileByGraphqlAPI: (token) => void;
 }
 
-class Profile extends React.Component<IProps & IDispProps, {}> {
+interface IState {
+}
 
-  private url: string = '';
+class Profile extends React.Component<IProps & IDispProps & WithStyles<typeof styles>, IState> {
 
   render() {
-    let { profile, isFetching, loadProfile } = this.props;
+    let { token, profile, isAPIFetching, isGAPIFetching, getProfileByRestAPI, getProfileByGraphqlAPI } = this.props;
 
-    if ( typeof(document) !== 'undefined' ) {
-      let protocol = (('https:' == document.location.protocol) ? 'https://' : 'http://');
-      this.url = protocol + location.host + '/api/me';
+    if (!profile.displayName && token) {
+      getProfileByGraphqlAPI(token);
     }
 
     return (
       <div>
-        <h2>UserId : { profile.userid }</h2>
-        <h2>Username : { profile.username }</h2>
-        <button type="button" className="btn btn-primary btn-sm" onClick={() => loadProfile(this.url)} disabled={isFetching}>Fetch</button>
-        { isFetching ? <span> Feching...</span> : <span> Done</span> }
+        <h2>Rest API Sample</h2>
+        <button type="button" className="btn btn-primary btn-sm" onClick={() => getProfileByRestAPI()} disabled={isAPIFetching}>Fetch</button>
+        {isAPIFetching ? <span> Feching...</span> : <span> Done</span>}
         <p>Fetch from <a href="/api/me">/api/me</a></p>
+        <h3>eEail : {this.props.email}</h3>
+        <h3>Name : {this.props.displayName}</h3>
+        <hr></hr>
+        <h2>Graphql API Sample</h2>
+        <button type="button" className="btn btn-primary btn-sm" onClick={() => getProfileByGraphqlAPI(token)} disabled={isGAPIFetching}>Fetch</button>
+        {isGAPIFetching ? <span> Feching...</span> : <span> Done</span>}
+        <p>Fetch from <a href="/gapi/member">/gapi/member</a></p>
+        {token == undefined ? <span>Getting token..</span> : this.profileComponent()}
+        <hr></hr>
+        <h2>Authentication token:</h2>
+        <p>{this.props.token}</p>
       </div>
+    );
+  }
+
+  profileComponent = () => {
+    let { profile } = this.props;
+    return (
+      <>
+        <h3>EMail : {profile.email} </h3>
+        <h3>DisplayName : {profile.displayName} </h3>
+        <h3>FirstName : {profile.firstName} </h3>
+        <h3>LastName : {profile.lastName} </h3>
+      </>
     );
   }
 
   // It is called only client rendering
   componentDidMount() {
-    let { isFetching, loadProfile } = this.props;
-    loadProfile(this.url);
+    let { getProfileByRestAPI, getProfileByGraphqlAPI, token } = this.props;
+    getProfileByRestAPI();
+    if (token != undefined) {
+      getProfileByGraphqlAPI(token);
+    }
   }
 }
 
 const mapStateToProps = (store: IStore, ownProps) => {
   return {
+    token: store.memberState.token,
+    email: store.memberState.email,
+    displayName: store.memberState.displayName,
     profile: store.memberState.profile,
-    isFetching: ProfileActions.getProfile.isPending(store)
+    isAPIFetching: ProfileActions.getProfile.isPending(store),
+    isGAPIFetching: ProfileActions.getProfileByGAPI.isPending(store)
   };
 };
 
 const mapDispatchToProps = (dispatch): IDispProps => {
   return {
-    loadProfile: (url): void => {
-      dispatch(ProfileActions.updateFetchStatus(true));
-      dispatch(ProfileActions.getProfile(url));
+    getProfileByRestAPI: (): void => {
+      dispatch(ProfileActions.getProfile());
+    },
+    getProfileByGraphqlAPI: (token): void => {
+      dispatch(ProfileActions.getProfileByGAPI({ token: token }));
     }
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(Profile));

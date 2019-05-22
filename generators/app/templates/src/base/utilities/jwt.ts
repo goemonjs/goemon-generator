@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-
 import { envs } from '../../env';
 
 export function createJWTToken(obj: object) {
@@ -9,7 +8,7 @@ export function createJWTToken(obj: object) {
   }
 
   return jwt.sign(obj, secret, {
-    expiresIn: '60m'
+    expiresIn: '1m'
   });
 }
 
