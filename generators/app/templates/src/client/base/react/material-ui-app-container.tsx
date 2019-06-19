@@ -7,15 +7,16 @@ import { AppContainer } from './app-container';
 import { MuiPickersUtilsProvider } from 'material-ui-pickers';
 import moment from 'moment';
 import MomentUtils from '@date-io/moment';
-// import i18n from '../../localization/i18n';
+
+import { isClientSide } from '../utilities/utils';
 
 interface IProps {
   i18n: any;
   store: any;
+  theme: any;
   location?: string;
   context?: any;
   basename?: string;
-  theme?: any;
   sheetsRegistry?: SheetsRegistry;
 }
 
@@ -43,10 +44,12 @@ export class MaterialUiAppContainer extends React.Component<IProps, {}> {
   // Remove the server-side injected CSS.
   componentDidMount() {
     // if there is this code, design desapperes when production mode
-    // const jssStyles = document.getElementById('jss-server-side');
-    // if (jssStyles && jssStyles.parentNode) {
-    //   jssStyles.parentNode.removeChild(jssStyles);
-    // }
+    if (isClientSide()) {
+      const jssStyles = document.getElementById('jss-server-side');
+      if (jssStyles && jssStyles.parentNode) {
+        jssStyles.parentNode.removeChild(jssStyles);
+      }
+    }
   }
 
   render() {
@@ -56,7 +59,7 @@ export class MaterialUiAppContainer extends React.Component<IProps, {}> {
 
     moment.locale(i18n.language);
 
-    if (typeof window !== 'undefined') { // Check whether this method is called on client or server
+    if (isClientSide()) { // Check whether this method is called on client or server
       return (
         <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
           <MuiThemeProvider theme={theme}>
